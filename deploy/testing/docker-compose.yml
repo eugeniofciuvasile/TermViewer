@@ -1,0 +1,170 @@
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    environment:
+      - DOCKER_API_VERSION=1.41
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./traefik/certs:/etc/traefik/certs:ro
+    networks:
+      termviewer_net:
+        aliases:
+          - ${TESTING_SSO_DOMAIN:-sso.localhost}
+          - ${TESTING_DOMAIN:-localhost}
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_BOOTSTRAP_DB:-keycloak}
+      POSTGRES_USER: ${POSTGRES_USER:-keycloak}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_APP_DB: ${POSTGRES_APP_DB:-termviewer}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../server/infrastructure/postgres-init:/docker-entrypoint-initdb.d
+    networks:
+      - termviewer_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-keycloak}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_BOOTSTRAP_DB:-keycloak}
+      KC_DB_USERNAME: ${POSTGRES_USER:-keycloak}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: ${TESTING_SSO_DOMAIN:-sso.localhost}
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_URL: https://${TESTING_SSO_DOMAIN:-sso.localhost}
+      KC_HOSTNAME_ADMIN_URL: https://${TESTING_SSO_DOMAIN:-sso.localhost}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - termviewer_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`${TESTING_SSO_DOMAIN:-sso.localhost}`)"
+      - "traefik.http.routers.keycloak.entrypoints=websecure"
+      - "traefik.http.routers.keycloak.tls=true"
+      - "traefik.http.routers.keycloak.middlewares=global-ratelimit@file,secure-headers@file"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+
+  backend:
+    build:
+      context: ../../server/backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      APP_ADDR: ":3001"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-keycloak}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      DB_NAME: ${POSTGRES_APP_DB:-termviewer}
+      DB_SSLMODE: disable
+      KC_URL: https://${TESTING_SSO_DOMAIN:-sso.localhost}
+      KC_SKIP_TLS_VERIFY: "true"
+      KC_REALM: ${KC_REALM:-termviewer}
+      KC_ADMIN_USER: ${KEYCLOAK_ADMIN:-admin}
+      KC_ADMIN_PASS: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_APP_CLIENT_ID: termviewer-app
+      KC_ADMIN_ROLE: ${KC_ADMIN_ROLE:-termviewer-admin}
+      FRONTEND_BASE_URL: https://${TESTING_DOMAIN:-localhost}
+      CORS_ALLOWED_ORIGINS: https://${TESTING_DOMAIN:-localhost}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+    extra_hosts:
+      - "${TESTING_SSO_DOMAIN:-sso.localhost}:host-gateway"
+      - "${TESTING_DOMAIN:-localhost}:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    networks:
+      - termviewer_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${TESTING_DOMAIN:-localhost}`) && (PathPrefix(`/api`) && !PathPrefix(`/api/auth`) || PathPrefix(`/ws`))"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.routers.backend.middlewares=global-ratelimit@file,secure-headers@file"
+      - "traefik.http.services.backend.loadbalancer.server.port=3001"
+
+  frontend:
+    build:
+      context: ../../server/frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://${TESTING_DOMAIN:-localhost}
+        NEXT_PUBLIC_BACKEND_URL: https://${TESTING_DOMAIN:-localhost}
+    container_name: frontend
+    environment:
+      NODE_ENV: production
+      NEXTAUTH_URL: https://${TESTING_DOMAIN:-localhost}
+      NEXT_PUBLIC_API_URL: https://${TESTING_DOMAIN:-localhost}
+      NEXT_PUBLIC_BACKEND_URL: https://${TESTING_DOMAIN:-localhost}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-termviewer-secret-12345}
+      KEYCLOAK_ISSUER: https://${TESTING_SSO_DOMAIN:-sso.localhost}/realms/${KC_REALM:-termviewer}
+      KEYCLOAK_CLIENT_ID: termviewer-app
+      KEYCLOAK_CLIENT_SECRET: ""
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
+    extra_hosts:
+      - "${TESTING_SSO_DOMAIN:-sso.localhost}:host-gateway"
+      - "${TESTING_DOMAIN:-localhost}:host-gateway"
+    networks:
+      - termviewer_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${TESTING_DOMAIN:-localhost}`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.middlewares=global-ratelimit@file,secure-headers@file"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    environment:
+      DOZZLE_LEVEL: info
+      DOZZLE_AUTH_PROVIDER: simple
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./dozzle/users.yml:/data/users.yml:ro
+    networks:
+      - termviewer_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dozzle.rule=Host(`${TESTING_LOGS_DOMAIN:-logs.localhost}`)"
+      - "traefik.http.routers.dozzle.entrypoints=websecure"
+      - "traefik.http.routers.dozzle.tls=true"
+      - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+
+volumes:
+  postgres_data:
+
+networks:
+  termviewer_net:
+    name: termviewer_net

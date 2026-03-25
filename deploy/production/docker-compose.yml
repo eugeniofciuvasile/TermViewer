@@ -1,0 +1,155 @@
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    environment:
+      - DOCKER_API_VERSION=1.41
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./traefik/acme.json:/etc/traefik/acme.json
+    networks:
+      - termviewer_net
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_BOOTSTRAP_DB:-keycloak}
+      POSTGRES_USER: ${POSTGRES_USER:-keycloak}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_APP_DB: ${POSTGRES_APP_DB:-termviewer}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../../server/infrastructure/postgres-init:/docker-entrypoint-initdb.d
+    networks:
+      - termviewer_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-keycloak}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: start
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_BOOTSTRAP_DB:-keycloak}
+      KC_DB_USERNAME: ${POSTGRES_USER:-keycloak}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME:-auth.yourdomain.com}
+      KC_HOSTNAME_URL: https://${KEYCLOAK_HOSTNAME:-auth.yourdomain.com}
+      KC_HOSTNAME_ADMIN_URL: https://${KEYCLOAK_HOSTNAME:-auth.yourdomain.com}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - termviewer_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`${KEYCLOAK_HOSTNAME:-auth.yourdomain.com}`)"
+      - "traefik.http.routers.keycloak.entrypoints=websecure"
+      - "traefik.http.routers.keycloak.tls.certresolver=letsencrypt"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+
+  backend:
+    build:
+      context: ../../server/backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      APP_ADDR: ":3001"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-keycloak}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      DB_NAME: ${POSTGRES_APP_DB:-termviewer}
+      DB_SSLMODE: disable
+      KC_URL: http://keycloak:8080
+      KC_SKIP_TLS_VERIFY: "false"
+      KC_REALM: ${KC_REALM:-termviewer}
+      KC_ADMIN_USER: ${KEYCLOAK_ADMIN:-admin}
+      KC_ADMIN_PASS: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_APP_CLIENT_ID: termviewer-app
+      KC_ADMIN_ROLE: ${KC_ADMIN_ROLE:-termviewer-admin}
+      FRONTEND_BASE_URL: ${NEXTAUTH_URL:-https://yourdomain.com}
+      CORS_ALLOWED_ORIGINS: ${NEXTAUTH_URL:-https://yourdomain.com}
+      SMTP_HOST: ${SMTP_HOST:-smtp.resend.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-resend}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_FROM: ${SMTP_FROM}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    networks:
+      - termviewer_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${DOMAIN:-yourdomain.com}`) && (PathPrefix(`/api`) && !PathPrefix(`/api/auth`) || PathPrefix(`/admin`) || PathPrefix(`/agent`) || PathPrefix(`/machines`) || PathPrefix(`/ws`))"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.backend.loadbalancer.server.port=3001"
+
+  frontend:
+    build:
+      context: ../../server/frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://yourdomain.com}
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_API_URL:-https://yourdomain.com}
+    container_name: frontend
+    environment:
+      NODE_ENV: production
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-https://yourdomain.com}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://yourdomain.com}
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_API_URL:-https://yourdomain.com}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      KEYCLOAK_ISSUER: https://${KEYCLOAK_HOSTNAME:-auth.yourdomain.com}/realms/${KC_REALM:-termviewer}
+      KEYCLOAK_CLIENT_ID: termviewer-app
+      KEYCLOAK_CLIENT_SECRET: ""
+    networks:
+      - termviewer_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN:-yourdomain.com}`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    environment:
+      DOZZLE_LEVEL: info
+      DOZZLE_AUTH_PROVIDER: simple
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./dozzle/users.yml:/data/users.yml:ro
+    networks:
+      - termviewer_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dozzle.rule=Host(`logs.${DOMAIN:-yourdomain.com}`)"
+      - "traefik.http.routers.dozzle.entrypoints=websecure"
+      - "traefik.http.routers.dozzle.tls.certresolver=letsencrypt"
+      - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+
+volumes:
+  postgres_data:
+
+networks:
+  termviewer_net:
+    name: termviewer_net

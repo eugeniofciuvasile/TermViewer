@@ -1,0 +1,13 @@
+[Unit]
+Description=TermViewer Agent Daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/termviewer-agent
+WorkingDirectory=/var/lib/termviewer
+User=root
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

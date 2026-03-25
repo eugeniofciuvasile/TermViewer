@@ -1,0 +1,38 @@
+# Binaries and build artifacts
+dist/
+bin/
+out/
+*.deb
+*.rpm
+*.tar.gz
+*.zip
+agent/agent
+agent/agent_bin
+agent/termviewer-agent
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Go
+/agent/vendor/
+agent/*.test
+agent/*.out
+agent/termviewer-record-*.cast
+
+# Secrets and sensitive data
+*.pem
+*.key
+*.cert
+.env
+.env.*
+!.env.template
+!**/.env.template
+deploy/*/dozzle/

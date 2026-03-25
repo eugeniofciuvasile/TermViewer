@@ -1,0 +1,25 @@
+name: "termviewer-agent"
+arch: "amd64"
+platform: "linux"
+version: "1.0.0"
+section: "utils"
+priority: "optional"
+maintainer: "TermViewer Team <maintainer@termviewer.io>"
+description: |
+  Secure terminal streaming agent for remote LAN access or Private/Public Server.
+  TermViewer Agent allows you to stream your terminal to the TermViewer mobile app
+  securely over LAN with TLS encryption and HMAC authentication or Private/Public Server.
+vendor: "TermViewer"
+homepage: "https://github.com/eugeniofciuvasile/termviewer"
+license: "MIT"
+
+contents:
+  - src: "dist/termviewer-agent"
+    dst: "/usr/bin/termviewer-agent"
+  - src: "packaging/termviewer-agent.service"
+    dst: "/lib/systemd/system/termviewer-agent.service"
+
+overrides:
+  deb:
+    depends:
+      - libc6

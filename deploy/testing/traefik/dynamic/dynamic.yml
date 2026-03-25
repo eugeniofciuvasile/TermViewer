@@ -1,0 +1,29 @@
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/traefik/certs/server.crt
+        keyFile: /etc/traefik/certs/server.key
+  certificates:
+    - certFile: /etc/traefik/certs/server.crt
+      keyFile: /etc/traefik/certs/server.key
+
+http:
+  middlewares:
+    # Rate limit: 100 requests per second per IP, with a burst of 50
+    global-ratelimit:
+      rateLimit:
+        average: 100
+        burst: 50
+    
+    # Secure Headers for ISO 27001 (Refined for Keycloak compatibility)
+    secure-headers:
+      headers:
+        # customFrameOptionsValue allows Keycloak to use internal iframes
+        customFrameOptionsValue: "SAMEORIGIN"
+        contentTypeNosniff: true
+        browserXssFilter: true
+        forceSTSHeader: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
