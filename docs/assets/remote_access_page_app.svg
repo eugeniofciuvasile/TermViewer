@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    </style>
+    <clipPath id="screen-clip">
+      <rect x="0" y="0" width="390" height="844" rx="32"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#screen-clip)">
+    <rect width="390" height="844" fill="#121212" rx="32"/>
+    <path d="M30 60 L18 70 L30 80" fill="none" stroke="#e0e0e0" stroke-width="2"/>
+    <text x="195.0" y="75" fill="#e0e0e0" font-size="17" font-weight="600" text-anchor="middle">TermViewer Remote Access</text>
+    <rect x="278" y="58" width="20" height="20" fill="none" rx="2" stroke="#888888" stroke-width="1.5"/>
+    <rect x="282" y="62" width="5" height="5" fill="#888888" rx="1"/>
+    <rect x="289" y="62" width="5" height="5" fill="#888888" rx="1"/>
+    <rect x="282" y="69" width="5" height="5" fill="#888888" rx="1"/>
+    <circle cx="330" cy="68" r="10" fill="none" stroke="#888888" stroke-width="1.5"/>
+    <circle cx="360" cy="68" r="10" fill="none" stroke="#888888" stroke-width="1.5" stroke-dasharray="50 13"/>
+    <rect x="20" y="100" width="350" height="140" fill="#2a2a2e" rx="12"/>
+    <text x="40" y="130" fill="#e0e0e0" font-size="16" font-weight="600" text-anchor="start">Scan a Share QR</text>
+    <text x="40" y="152" fill="#888888" font-size="12" font-weight="normal" text-anchor="start">Use the in-app QR scanner to open a</text>
+    <text x="40" y="168" fill="#888888" font-size="12" font-weight="normal" text-anchor="start">short-lived share session immediately,</text>
+    <text x="40" y="184" fill="#888888" font-size="12" font-weight="normal" text-anchor="start">even without signing in first.</text>
+    <rect x="40" y="198" width="180" height="30" fill="#bb86fc" rx="15"/>
+    <rect x="55" y="203" width="16" height="16" fill="none" rx="2" stroke="#121212" stroke-width="1.5"/>
+    <rect x="58" y="206" width="4" height="4" fill="#121212" rx="1"/>
+    <text x="80" y="218" fill="#121212" font-size="12" font-weight="500" text-anchor="start">Scan Share QR</text>
+    <rect x="20" y="260" width="350" height="230" fill="#2a2a2e" rx="12"/>
+    <text x="40" y="290" fill="#e0e0e0" font-size="16" font-weight="600" text-anchor="start">Public Server Profiles</text>
+    <circle cx="300" cy="284" r="12" fill="none" stroke="#888888" stroke-width="1"/>
+    <circle cx="335" cy="284" r="12" fill="none" stroke="#888888" stroke-width="1"/>
+    <rect x="36" y="310" width="298" height="50" fill="#1e1e1e" rx="8" stroke="#444444" stroke-width="1"/>
+    <text x="48" y="327" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Selected server</text>
+    <text x="48" y="348" fill="#e0e0e0" font-size="14" font-weight="normal" text-anchor="start">production</text>
+    <path d="M315 333 L322 340 L329 333" fill="none" stroke="#888888" stroke-width="1.5"/>
+    <text x="40" y="382" fill="#888888" font-size="12" font-weight="normal" text-anchor="start">API: https://termviewer.example.com</text>
+    <text x="40" y="400" fill="#888888" font-size="12" font-weight="normal" text-anchor="start">OIDC issuer: https://auth.example.com</text>
+    <text x="40" y="418" fill="#888888" font-size="12" font-weight="normal" text-anchor="start">Client ID: termviewer-app</text>
+    <rect x="36" y="435" width="140" height="35" fill="#bb86fc" rx="18"/>
+    <text x="60" y="457" fill="#121212" font-size="12" font-weight="500" text-anchor="start">🔐 Refresh login</text>
+    <rect x="186" y="435" width="120" height="35" fill="#121212" rx="18" stroke="#444444" stroke-width="1"/>
+    <text x="210" y="457" fill="#e0e0e0" font-size="12" font-weight="500" text-anchor="start">→ Sign out</text>
+    <rect x="20" y="510" width="350" height="230" fill="#2a2a2e" rx="12"/>
+    <text x="40" y="540" fill="#e0e0e0" font-size="16" font-weight="600" text-anchor="start">Your Machines</text>
+    <rect x="36" y="560" width="298" height="72" fill="#1e1e1e" rx="8"/>
+    <rect x="52" y="580" width="24" height="17" fill="none" rx="2" stroke="#888888" stroke-width="1"/>
+    <line x1="58" y1="600" x2="70" y2="607" stroke="#888888" stroke-width="1"/>
+    <line x1="70" y1="600" x2="82" y2="607" stroke="#888888" stroke-width="1"/>
+    <text x="90" y="582" fill="#e0e0e0" font-size="14" font-weight="500" text-anchor="start">dev-server</text>
+    <text x="90" y="600" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Status: </text>
+    <text x="140" y="600" fill="#4caf50" font-size="11" font-weight="600" text-anchor="start">ONLINE</text>
+    <text x="90" y="616" fill="#888888" font-size="10" font-weight="normal" text-anchor="start">Last seen: 2026-03-26 10:42:18</text>
+    <rect x="260" y="578" width="80" height="32" fill="#bb86fc" rx="16"/>
+    <text x="275" y="599" fill="#121212" font-size="11" font-weight="500" text-anchor="start">Connect</text>
+    <rect x="36" y="645" width="298" height="72" fill="#1e1e1e" rx="8"/>
+    <rect x="52" y="665" width="24" height="17" fill="none" rx="2" stroke="#888888" stroke-width="1"/>
+    <line x1="58" y1="685" x2="70" y2="692" stroke="#888888" stroke-width="1"/>
+    <line x1="70" y1="685" x2="82" y2="692" stroke="#888888" stroke-width="1"/>
+    <text x="90" y="667" fill="#e0e0e0" font-size="14" font-weight="500" text-anchor="start">home-desktop</text>
+    <text x="90" y="685" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Status: </text>
+    <text x="140" y="685" fill="#ffca28" font-size="11" font-weight="600" text-anchor="start">WAITING</text>
+    <text x="90" y="701" fill="#888888" font-size="10" font-weight="normal" text-anchor="start">Last seen: 2026-03-25 22:15:03</text>
+    <rect x="260" y="663" width="80" height="32" fill="#3a3a3e" rx="16"/>
+    <text x="270" y="684" fill="#e0e0e0" font-size="11" font-weight="500" text-anchor="start">Refresh</text>
+  </g>
+</svg>

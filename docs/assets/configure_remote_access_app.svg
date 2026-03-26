@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" width="390" height="844">
+  <defs>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    </style>
+    <clipPath id="screen-clip">
+      <rect x="0" y="0" width="390" height="844" rx="32"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#screen-clip)">
+    <rect width="390" height="844" fill="#121212" rx="32"/>
+    <path d="M30 60 L18 70 L30 80" fill="none" stroke="#e0e0e0" stroke-width="2"/>
+    <text x="195.0" y="75" fill="#e0e0e0" font-size="18" font-weight="600" text-anchor="middle">Add Server Profile</text>
+    <rect x="24" y="110" width="342" height="52" fill="#1e1e1e" rx="8" stroke="#444444" stroke-width="1"/>
+    <text x="36" y="141.0" fill="#888888" font-size="14" font-weight="normal" text-anchor="start">Profile name</text>
+    <rect x="24" y="185" width="342" height="52" fill="#1e1e1e" rx="8" stroke="#444444" stroke-width="1"/>
+    <text x="36" y="177" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">API base URL</text>
+    <text x="36" y="216.0" fill="#e0e0e0" font-size="14" font-weight="normal" text-anchor="start">https://termviewer.example.com</text>
+    <text x="28" y="253" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Example: https://api.termviewer.example</text>
+    <rect x="24" y="274" width="342" height="52" fill="#1e1e1e" rx="8" stroke="#444444" stroke-width="1"/>
+    <text x="36" y="266" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">OIDC issuer URL</text>
+    <text x="36" y="305.0" fill="#e0e0e0" font-size="14" font-weight="normal" text-anchor="start">https://auth.example.com/realms/termviewer</text>
+    <text x="28" y="342" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Example: https://auth.termviewer.example/realms/termviewer</text>
+    <rect x="24" y="363" width="342" height="52" fill="#1e1e1e" rx="8" stroke="#444444" stroke-width="1"/>
+    <text x="36" y="394.0" fill="#888888" font-size="14" font-weight="normal" text-anchor="start">TLS Fingerprint (Optional)</text>
+    <text x="28" y="431" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">SHA-256 hash if using self-signed certificates.</text>
+    <rect x="24" y="452" width="342" height="52" fill="#1e1e1e" rx="8" stroke="#444444" stroke-width="1"/>
+    <text x="36" y="444" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">OIDC client ID</text>
+    <text x="36" y="483.0" fill="#e0e0e0" font-size="14" font-weight="normal" text-anchor="start">termviewer-app</text>
+    <rect x="24" y="527" width="342" height="52" fill="#1e1e1e" rx="8" stroke="#444444" stroke-width="1"/>
+    <text x="36" y="519" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Redirect URI</text>
+    <text x="36" y="558.0" fill="#e0e0e0" font-size="14" font-weight="normal" text-anchor="start">com.termviewer.termviewer:/oauthredirect</text>
+    <text x="28" y="595" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Must stay registered in the app and in your Keycloak client.</text>
+    <rect x="24" y="616" width="342" height="52" fill="#1e1e1e" rx="8" stroke="#444444" stroke-width="1"/>
+    <text x="36" y="608" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Scopes</text>
+    <text x="36" y="647.0" fill="#e0e0e0" font-size="14" font-weight="normal" text-anchor="start">openid profile email offline_access</text>
+    <text x="28" y="684" fill="#888888" font-size="11" font-weight="normal" text-anchor="start">Space-separated scopes. Default: openid profile email offline_access</text>
+    <rect x="24" y="715" width="342" height="50" fill="#bb86fc" rx="25"/>
+    <text x="195.0" y="747" fill="#121212" font-size="16" font-weight="600" text-anchor="middle">Save Profile</text>
+  </g>
+</svg>

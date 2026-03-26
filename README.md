@@ -20,6 +20,45 @@ TermViewer is a secure terminal streaming platform with two operational modes:
 
 ---
 
+## 📱 App Showcase
+
+<div align="center">
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/assets/homepage_app.svg" width="220" alt="Home & Discovery"/><br/>
+      <b>Home & Discovery</b><br/>
+      <sub>Auto-discover agents on LAN<br/>or connect manually</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/session_list_app.svg" width="220" alt="Session Selection"/><br/>
+      <b>Session Selection</b><br/>
+      <sub>Choose tmux or TermViewer<br/>sessions with live previews</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/terminal_access_app.svg" width="220" alt="Terminal View"/><br/>
+      <b>Terminal View</b><br/>
+      <sub>Full terminal with system HUD,<br/>file browser, and keybar</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/assets/remote_access_page_app.svg" width="220" alt="Remote Access"/><br/>
+      <b>Remote Access</b><br/>
+      <sub>QR scanning, OIDC login,<br/>and machine management</sub>
+    </td>
+    <td align="center">
+      <img src="docs/assets/configure_remote_access_app.svg" width="220" alt="Server Configuration"/><br/>
+      <b>Server Configuration</b><br/>
+      <sub>Configure public server profiles<br/>with OIDC and TLS settings</sub>
+    </td>
+    <td></td>
+  </tr>
+</table>
+</div>
+
+---
+
 ## ⚡ Quick Start
 
 ### LAN Mode
