@@ -197,7 +197,7 @@ Contributions are welcome! Whether it's bug reports, feature requests, or pull r
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [AGPLv3](LICENSE).
 
 ---
 
