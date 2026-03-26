@@ -9,17 +9,23 @@ Use it together with `REMOTE_ACCESS_ARCHITECTURE.md`:
 
 ## 1. Why this document exists
 
-The repository already contains a partial remote-access stack, but the current implementation is not yet aligned end to end.
+The repository contains a functional remote-access stack. Most of the flows described here are implemented end to end.
 
-The main gaps are:
+The current implementation status:
 
-1. The public-server flow is incomplete.
-2. The web UI is missing important pages and needs a redesign.
-3. The dashboard QR code behavior is wrong.
-4. QR scanning is not implemented in the Flutter app.
-5. Flutter does not yet expose configurable OIDC/Keycloak login for public-server access.
+1. QR scanning is implemented in the Flutter app.
+2. OIDC login with Authorization Code + PKCE is implemented in Flutter.
+3. Machine list and device selection flow is implemented.
+4. Admin approval and activation pages exist in the web UI.
+5. The backend relay, session orchestration, and machine lifecycle are operational.
 
-This document defines the correct target behavior before implementation continues.
+The remaining gaps are:
+
+1. OS-level deep-link handling (e.g., `termviewer://` scheme registration) is not yet wired on all platforms.
+2. Further UI polish and edge-case handling across web and mobile surfaces.
+3. Production hardening (rate limiting tuning, observability dashboards, load testing).
+
+This document defines the target behavior and serves as the canonical reference for the product flow.
 
 ## 2. Core principles
 
@@ -307,8 +313,6 @@ Possible behaviors:
 - if a machine is `online`, request a new share session
 - if a machine is `streaming`, show the active session state or offer takeover rules later
 - if a machine is `offline`, show it as unavailable
-
-This is the TeamViewer-like path the product should eventually support.
 
 ## 7. Flutter OIDC requirements
 

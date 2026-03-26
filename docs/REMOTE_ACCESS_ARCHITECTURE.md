@@ -1,5 +1,7 @@
 # 📄 TermViewer Remote Access Architecture (Production-Ready)
 
+> **Implementation Status:** The core infrastructure described in this document is implemented and functional. The backend (Go/Fiber), frontend (Next.js), Keycloak integration, PostgreSQL with RLS, Traefik routing, and Docker Compose deployment are all operational. See the deploy/ directory for production and testing configurations.
+
 ## 1. 🎯 Objective
 
 Design a secure, scalable, and production-grade remote terminal streaming platform that:
@@ -10,7 +12,7 @@ Design a secure, scalable, and production-grade remote terminal streaming platfo
 * Provides both:
 
   * QR-based instant connection
-  * Dashboard-driven device access (TeamViewer-like)
+  * Dashboard-driven device access
 
 For the canonical product flow, missing page inventory, QR rules, and Flutter public-mode requirements, see `REMOTE_SESSION_FLOW.md`.
 

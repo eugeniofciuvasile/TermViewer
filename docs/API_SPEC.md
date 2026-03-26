@@ -239,3 +239,35 @@ Pushed by agent when status changes (like recording).
   "payload": { "is_recording": true | false }
 }
 ```
+
+## 9. Clipboard Synchronization
+
+### Message: `clipboard_sync` (Agent -> Client)
+Server pushes clipboard content to the client.
+```json
+{
+  "type": "clipboard_sync",
+  "payload": { "content": "string" }
+}
+```
+
+### Message: `clipboard_update` (Client -> Agent)
+Client sends clipboard content to the agent.
+```json
+{
+  "type": "clipboard_update",
+  "payload": { "content": "string" }
+}
+```
+
+## 10. Keep-alive
+
+### Message: `ping` (Client -> Agent)
+```json
+{ "type": "ping" }
+```
+
+### Message: `pong` (Agent -> Client)
+```json
+{ "type": "pong" }
+```
