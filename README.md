@@ -9,6 +9,8 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.11-02569B?logo=flutter)](https://flutter.dev)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js)](https://nextjs.org)
 
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/mreuz)
+
 </div>
 
 ---
@@ -243,5 +245,7 @@ This project is licensed under the [AGPLv3](LICENSE).
 <div align="center">
 
 ⭐ If you find TermViewer useful, consider giving it a star!
+
+<a href="https://buymeacoffee.com/mreuz"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=mreuz&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" height="40"></a>
 
 </div>
