@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 import { authOptions, sessionHasAdminRole } from "@/lib/auth";
 import api from "@/lib/api";
 
@@ -113,11 +114,11 @@ export default async function AdminPage() {
       <div className="page-shell">
         <SiteHeader />
         <div className="page-content py-20 flex justify-center">
-          <div className="surface-card max-w-sm w-full text-center border-t-4 border-red-600">
-            <ShieldAlert size={48} className="mx-auto text-red-500 mb-6" />
-            <h1 className="section-title">Privileged Access</h1>
+          <div className="max-w-sm w-full text-center">
+            <ShieldAlert size={32} className="mx-auto text-[var(--danger)] mb-4" />
+            <h1 className="section-title">Access denied</h1>
             <p className="section-copy mt-2">You lack the administrative roles required for this console.</p>
-            <Link href="/dashboard" className="button-ghost w-full mt-8">Back to Safety</Link>
+            <Link href="/dashboard" className="button-ghost w-full mt-6">Back to fleet</Link>
           </div>
         </div>
       </div>
@@ -141,84 +142,76 @@ export default async function AdminPage() {
       <SiteHeader />
 
       <main className="page-content">
-        <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <p className="eyebrow mb-1">Gated Access</p>
-            <h1 className="page-title">Approval Queue</h1>
-            <p className="section-copy">Review and manage workspace access requests.</p>
-          </div>
+        <div className="mb-8">
+          <p className="eyebrow mb-2">admin</p>
+          <h1 className="page-title">Approval queue</h1>
+          <p className="section-copy">Review and manage workspace access requests.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        {/* Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
           {[
-            { label: "Pending Requests", value: pendingUsers.length, icon: UserRoundCheck },
-            { label: "Awaiting Activation", value: approvedUsers.length, icon: Clock },
-            { label: "Approval Policy", value: "Role Locked", icon: ShieldAlert },
+            { label: "Pending", value: pendingUsers.length, icon: UserRoundCheck },
+            { label: "Awaiting activation", value: approvedUsers.length, icon: Clock },
+            { label: "Policy", value: "Role-locked", icon: ShieldAlert },
           ].map((card) => (
-            <div key={card.label} className="surface-card flex items-center gap-4">
-              <div className="h-12 w-12 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center">
-                <card.icon size={24} />
-              </div>
+            <div key={card.label} className="surface-card flex items-center gap-3 py-3 px-4">
+              <card.icon size={16} className="text-[var(--text-muted)]" />
               <div>
-                <p className="eyebrow mb-1">{card.label}</p>
-                <p className="text-xl font-bold text-slate-900 dark:text-white leading-none">{card.value}</p>
+                <p className="eyebrow">{card.label}</p>
+                <p className="text-lg font-semibold text-[var(--text-primary)] leading-tight mt-0.5">{card.value}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3 items-start">
-          <div className="lg:col-span-2 space-y-8">
-            {/* Pending Approval Table */}
+        <div className="grid gap-8 lg:grid-cols-[1fr_280px] items-start">
+          <div className="space-y-8">
+            {/* Pending Approval */}
             <div className="surface-card p-0 overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800">
-                <h2 className="text-sm font-semibold text-slate-900 dark:text-white">Pending Approval</h2>
+              <div className="px-4 py-3 border-b border-[var(--border)]">
+                <h2 className="text-[13px] font-medium text-[var(--text-primary)]">Pending approval</h2>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[500px]">
+                <table className="data-table min-w-[480px]">
                   <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">User Identity</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Requested</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Action</th>
+                    <tr>
+                      <th>Identity</th>
+                      <th>Requested</th>
+                      <th className="text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody>
                     {error ? (
                       <tr>
-                        <td colSpan={3} className="px-6 py-8 text-center">
+                        <td colSpan={3} className="text-center py-8">
                           <span className="p-tag p-tag-danger">{error}</span>
                         </td>
                       </tr>
                     ) : pendingUsers.length === 0 ? (
                       <tr>
-                        <td colSpan={3} className="px-6 py-12 text-center text-slate-500 text-sm">
-                          <ShieldCheck size={32} className="mx-auto text-teal-600 mb-3 opacity-50" />
-                          No registrations currently pending review.
+                        <td colSpan={3} className="text-center py-10 text-[var(--text-muted)] text-sm">
+                          <ShieldCheck size={24} className="mx-auto text-[var(--accent)] mb-2 opacity-40" />
+                          No pending requests.
                         </td>
                       </tr>
                     ) : (
                       pendingUsers.map((user) => (
-                        <tr key={user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="h-8 w-8 rounded bg-orange-50 text-orange-600 dark:bg-orange-900/20 flex items-center justify-center">
-                                <UserRoundCheck size={16} />
-                              </div>
-                              <div>
-                                <p className="text-sm font-semibold text-slate-900 dark:text-white leading-tight">{user.username}</p>
-                                <p className="text-xs text-slate-500 mt-0.5">{user.email}</p>
-                              </div>
+                        <tr key={user.id}>
+                          <td>
+                            <div>
+                              <p className="text-[13px] font-medium text-[var(--text-primary)]">{user.username}</p>
+                              <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5">{user.email}</p>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                          <td className="text-[13px] text-[var(--text-secondary)]">
                             {new Date(user.created_at).toLocaleDateString()}
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="text-right">
                             <form action={approvePendingUser}>
                               <input type="hidden" name="userId" value={user.id} />
-                              <button type="submit" className="button-primary h-8 px-4">
-                                Approve <ArrowRight size={14} className="ml-1" />
+                              <button type="submit" className="button-primary h-7 px-3 text-xs">
+                                Approve <ArrowRight size={12} />
                               </button>
                             </form>
                           </td>
@@ -230,59 +223,54 @@ export default async function AdminPage() {
               </div>
             </div>
 
-            {/* Pending Activation Table */}
+            {/* Pending Activation */}
             <div className="surface-card p-0 overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
-                <AlertTriangle size={16} className="text-amber-500" />
-                <h2 className="text-sm font-semibold text-slate-900 dark:text-white">Pending Activation</h2>
-                <span className="text-xs text-slate-500 ml-1">Approved but not yet activated — email may have failed</span>
+              <div className="px-4 py-3 border-b border-[var(--border)] flex items-center gap-2">
+                <AlertTriangle size={13} className="text-[var(--warning)]" />
+                <h2 className="text-[13px] font-medium text-[var(--text-primary)]">Pending activation</h2>
+                <span className="text-[11px] text-[var(--text-muted)] ml-1">approved but not yet activated</span>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[500px]">
+                <table className="data-table min-w-[480px]">
                   <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">User Identity</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Approved</th>
-                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                    <tr>
+                      <th>Identity</th>
+                      <th>Approved</th>
+                      <th className="text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody>
                     {approvedUsers.length === 0 ? (
                       <tr>
-                        <td colSpan={3} className="px-6 py-12 text-center text-slate-500 text-sm">
-                          <CheckCircle2 size={32} className="mx-auto text-teal-600 mb-3 opacity-50" />
-                          All approved users have activated their accounts.
+                        <td colSpan={3} className="text-center py-10 text-[var(--text-muted)] text-sm">
+                          <CheckCircle2 size={24} className="mx-auto text-[var(--accent)] mb-2 opacity-40" />
+                          All users activated.
                         </td>
                       </tr>
                     ) : (
                       approvedUsers.map((user) => (
-                        <tr key={user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="h-8 w-8 rounded bg-amber-50 text-amber-600 dark:bg-amber-900/20 flex items-center justify-center">
-                                <Clock size={16} />
-                              </div>
-                              <div>
-                                <p className="text-sm font-semibold text-slate-900 dark:text-white leading-tight">{user.username}</p>
-                                <p className="text-xs text-slate-500 mt-0.5">{user.email}</p>
-                              </div>
+                        <tr key={user.id}>
+                          <td>
+                            <div>
+                              <p className="text-[13px] font-medium text-[var(--text-primary)]">{user.username}</p>
+                              <p className="text-xs font-mono text-[var(--text-muted)] mt-0.5">{user.email}</p>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                          <td className="text-[13px] text-[var(--text-secondary)]">
                             {new Date(user.created_at).toLocaleDateString()}
                           </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
+                          <td className="text-right">
+                            <div className="flex items-center justify-end gap-1.5">
                               <form action={resendActivationEmail}>
                                 <input type="hidden" name="userId" value={user.id} />
-                                <button type="submit" className="button-ghost h-8 px-3 text-xs" title="Resend activation email">
-                                  <RefreshCw size={14} className="mr-1" /> Resend
+                                <button type="submit" className="button-ghost h-7 px-2.5 text-xs">
+                                  <RefreshCw size={12} /> Resend
                                 </button>
                               </form>
                               <form action={forceActivateUser}>
                                 <input type="hidden" name="userId" value={user.id} />
-                                <button type="submit" className="button-primary h-8 px-3 text-xs bg-amber-600 hover:bg-amber-700 border-amber-600" title="Bypass email — activate immediately">
-                                  <Zap size={14} className="mr-1" /> Force Activate
+                                <button type="submit" className="button-primary h-7 px-2.5 text-xs" style={{ background: 'var(--warning)', borderColor: 'var(--warning)' }}>
+                                  <Zap size={12} /> Force
                                 </button>
                               </form>
                             </div>
@@ -296,22 +284,21 @@ export default async function AdminPage() {
             </div>
           </div>
 
+          {/* Sidebar */}
           <aside className="surface-card">
-            <h2 className="section-title mb-4">Security Policy</h2>
+            <h2 className="section-title mb-4">Security policy</h2>
             <div className="space-y-4">
               {[
-                { title: "Verification", text: "Admin role is strictly required to view or approve requests." },
-                { title: "Activation", text: "Approvals immediately dispatch a one-time activation email." },
-                { title: "Expiry", text: "Emailed activation tokens expire completely after 24 hours." },
-                { title: "Force Activate", text: "Bypasses email verification — use when email delivery fails." },
+                { title: "Verification", text: "Admin role strictly required to view or approve." },
+                { title: "Activation", text: "Approvals dispatch a one-time activation email." },
+                { title: "Expiry", text: "Activation tokens expire after 24 hours." },
+                { title: "Force activate", text: "Bypasses email — use when delivery fails." },
               ].map((item, i) => (
-                <div key={i} className="flex gap-3">
-                  <div className="mt-0.5 text-teal-600 shrink-0">
-                    <CheckCircle2 size={16} />
-                  </div>
+                <div key={i} className="flex gap-2.5">
+                  <CheckCircle2 size={14} className="text-[var(--accent)] shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-white leading-none">{item.title}</p>
-                    <p className="text-xs text-slate-500 mt-1">{item.text}</p>
+                    <p className="text-xs font-medium text-[var(--text-primary)]">{item.title}</p>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5 leading-relaxed">{item.text}</p>
                   </div>
                 </div>
               ))}
@@ -319,6 +306,8 @@ export default async function AdminPage() {
           </aside>
         </div>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

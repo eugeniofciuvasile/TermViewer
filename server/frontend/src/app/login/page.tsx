@@ -3,7 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { type FormEvent, Suspense, useState } from "react";
-import { ArrowRight, LoaderCircle, Shield, Terminal } from "lucide-react";
+import { ArrowRight, LoaderCircle, Terminal, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 function LoginForm() {
@@ -30,81 +30,81 @@ function LoginForm() {
       setError("Invalid credentials. Please try again.");
       setLoading(false);
     } else {
-      // Use window.location.href for a hard-redirect. 
-      // This ensures the session is fully picked up by the browser and 
-      // prevents hanging issues on the first login attempt.
       window.location.href = callbackUrl;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[var(--background)]">
-      <div className="w-full max-w-[380px]">
-        <div className="flex flex-col items-center mb-8">
-          <div className="h-12 w-12 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-600/20 mb-4">
-            <Terminal size={24} strokeWidth={2.5} />
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-[var(--canvas)]">
+      <div className="w-full max-w-[400px]">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors mb-12">
+          <ArrowLeft size={14} />
+          Back
+        </Link>
+
+        <div className="flex items-center gap-3 mb-12">
+          <div className="h-8 w-8 rounded-[10px] bg-[var(--accent)] flex items-center justify-center">
+            <Terminal size={16} strokeWidth={2.5} className="text-[var(--accent-fg)]" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-none">TermViewer</h1>
-          <p className="text-xs font-bold text-teal-600 dark:text-teal-400 mt-2 tracking-widest uppercase">Relay Plane</p>
+          <span className="text-base font-semibold text-[var(--text-primary)] tracking-tight">TermViewer</span>
         </div>
 
-        <div className="surface-card p-6 sm:p-8">
-          <div className="text-center mb-8">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Welcome back</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Please enter your details to sign in.</p>
+        <div className="mb-10">
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)] tracking-tight">Sign in</h1>
+          <p className="text-sm text-[var(--text-secondary)] mt-2">Access the terminal control plane.</p>
+        </div>
+
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
+            <label className="input-label">Username</label>
+            <input
+              type="text"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="input-field"
+              placeholder="username"
+              autoFocus
+            />
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Username</label>
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="input-field h-10"
-                placeholder="Enter your username"
-                autoFocus
-              />
-            </div>
+          <div>
+            <label className="input-label">Password</label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+              placeholder="••••••••"
+            />
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Password</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field h-10"
-                placeholder="••••••••"
-              />
+          {error && (
+            <div className="alert alert-danger animate-slide-up">
+              <span className="text-sm">{error}</span>
             </div>
+          )}
 
-            {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 text-xs rounded border border-red-100 dark:border-red-900/20">
-                {error}
-              </div>
+          <button type="submit" disabled={loading} className="button-primary w-full">
+            {loading ? (
+              <LoaderCircle size={16} className="animate-spin" />
+            ) : (
+              <>Sign in <ArrowRight size={14} /></>
             )}
+          </button>
+        </form>
 
-            <button type="submit" disabled={loading} className="button-primary w-full h-10 text-sm mt-2">
-              {loading ? (
-                <LoaderCircle size={18} className="animate-spin" />
-              ) : (
-                <>Sign in <ArrowRight size={16} className="ml-2" /></>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-8 text-center text-sm text-slate-500">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-semibold text-teal-600 hover:text-teal-700 dark:text-teal-400 hover:underline">
-              Request access
-            </Link>
-          </div>
+        <div className="mt-10 pt-6 border-t border-[var(--border)] text-center text-sm text-[var(--text-muted)]">
+          No account?{" "}
+          <Link href="/register" className="font-medium text-[var(--accent)] hover:underline">
+            Request access
+          </Link>
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-2 text-xs font-semibold text-slate-400">
-          <Shield size={14} /> Secured via OIDC
+        <div className="mt-10 flex items-center justify-center gap-2 text-xs font-mono text-[var(--text-muted)]">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
+          secured via keycloak oidc
         </div>
       </div>
     </div>
@@ -114,8 +114,8 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <LoaderCircle className="animate-spin text-teal-600" size={32} />
+      <div className="min-h-screen flex items-center justify-center bg-[var(--canvas)]">
+        <LoaderCircle className="animate-spin text-[var(--accent)]" size={24} />
       </div>
     }>
       <LoginForm />

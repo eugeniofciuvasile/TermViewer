@@ -1,17 +1,21 @@
 "use client";
 
-import { Terminal, LayoutDashboard, Settings } from "lucide-react";
+import { Terminal, LayoutDashboard, Settings, Menu, X, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 import { LogoutButton } from "@/components/auth-buttons";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/cn";
 
+const ICON_SIZE = 16;
+
 export default function SiteHeader({ className }: { className?: string }) {
   const pathname = usePathname();
   const { data: session, status } = useSession();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
     { href: "/", label: "Overview", icon: Terminal },
@@ -26,79 +30,111 @@ export default function SiteHeader({ className }: { className?: string }) {
   }
 
   return (
-    <header className={cn(
-      "sticky top-0 z-40 w-full bg-white dark:bg-[#0f172a] border-b-2 border-teal-600 dark:border-teal-500 shadow-sm transition-all duration-300",
-      className
-    )}>
-      <div className="page-content py-0 h-16 flex items-center justify-between">
+    <header className={cn("sticky top-0 z-40 w-full", className)}>
+      <div className="mx-auto max-w-[72rem] px-5 sm:px-8">
+        <div className="flex items-center justify-between h-16 px-5 my-3 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-sm)]">
 
-        {/* Left: Branding & Nav */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="text-teal-600 dark:text-teal-400">
-              <Terminal size={24} strokeWidth={2.5} />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base font-bold text-slate-900 dark:text-white leading-none tracking-tight">TermViewer</span>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1 leading-none">Relay Plane</span>
-            </div>
-          </Link>
-
-          <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden md:block" />
-
-          <nav className="hidden md:flex items-center gap-2">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-2 text-sm font-semibold rounded-md transition-colors",
-                    isActive
-                      ? "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white"
-                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-white"
-                  )}
-                >
-                  <Icon size={16} />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Right: Auth & Theme */}
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-
-          <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block" />
-
-          {status === "authenticated" && session ? (
-            <div className="flex items-center gap-4">
-              <div className="hidden sm:flex flex-col items-end">
-                <span className="text-sm font-semibold text-slate-900 dark:text-white leading-none">
-                  {session.user?.name ?? session.user?.email?.split('@')[0]}
-                </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  {session.isAdmin ? "Administrator" : "User"}
-                </span>
+          {/* ── Left: Logo + Nav ── */}
+          <div className="flex items-center gap-4 md:gap-8">
+            <Link href="/" className="flex items-center gap-3" onClick={() => setMobileOpen(false)}>
+              <div className="h-8 w-8 rounded-[10px] bg-[var(--accent)] flex items-center justify-center shadow-[0_0_14px_var(--accent-glow)]">
+                <Terminal size={ICON_SIZE} strokeWidth={2.5} className="text-[var(--accent-fg)]" />
               </div>
-              <LogoutButton variant="ghost" className="h-9 w-9 p-0 rounded-full hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors">
-                {""}
-              </LogoutButton>
-            </div>
-          ) : status === "loading" ? (
-            <div className="h-9 w-9 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
-          ) : (
-            <Link href="/login" className="button-primary h-9">
-              Sign In
+              <span className="text-[15px] font-semibold text-[var(--text-primary)] tracking-tight">TermViewer</span>
             </Link>
-          )}
-        </div>
 
+            <nav className="hidden md:flex items-center gap-1.5">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-[10px] transition-all duration-150",
+                      isActive
+                        ? "text-[var(--text-primary)] bg-[var(--surface-secondary)]"
+                        : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)]"
+                    )}
+                  >
+                    <Icon size={ICON_SIZE} strokeWidth={1.75} />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* ── Right ── */}
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+
+            {status === "authenticated" && session ? (
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:flex items-center gap-2.5 px-3 py-2 rounded-[10px] bg-[var(--surface-secondary)]">
+                  <div className="h-6 w-6 rounded-lg bg-[var(--accent-muted)] text-[var(--accent)] flex items-center justify-center text-[11px] font-mono font-semibold">
+                    {(session.user?.name ?? session.user?.email ?? "U")[0].toUpperCase()}
+                  </div>
+                  <span className="text-sm font-medium text-[var(--text-secondary)]">
+                    {session.user?.name ?? session.user?.email?.split("@")[0]}
+                  </span>
+                  {session.isAdmin && (
+                    <span className="text-[10px] font-mono text-[var(--accent)] opacity-75">admin</span>
+                  )}
+                </div>
+                <LogoutButton variant="ghost" className="button-icon text-[var(--text-muted)] hover:text-[var(--danger)] hover:bg-[var(--danger-muted)]">
+                  {""}
+                </LogoutButton>
+              </div>
+            ) : status === "loading" ? (
+              <div className="h-9 w-20 animate-pulse rounded-[10px] bg-[var(--surface-secondary)]" />
+            ) : (
+              <Link href="/login" className="button-primary button-sm">
+                Sign in <ChevronRight size={14} />
+              </Link>
+            )}
+
+            <button
+              className="md:hidden button-icon text-[var(--text-secondary)]"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X size={ICON_SIZE} /> : <Menu size={ICON_SIZE} />}
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* ── Mobile nav ── */}
+      {mobileOpen && (
+        <div className="md:hidden px-5 sm:px-8 pb-2">
+          <div className="mx-auto max-w-[72rem] bg-[var(--surface)] border border-[var(--border)] rounded-2xl shadow-[var(--shadow-md)] animate-slide-down overflow-hidden">
+            <nav className="p-2.5 flex flex-col gap-1">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-150",
+                      isActive
+                        ? "text-[var(--text-primary)] bg-[var(--surface-secondary)]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)]"
+                    )}
+                  >
+                    <Icon size={ICON_SIZE} strokeWidth={1.75} />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

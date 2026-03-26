@@ -2,6 +2,7 @@ import { CheckCircle2, ShieldAlert, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 import { cn } from "@/lib/cn";
 
 type ActivationState = "success" | "error";
@@ -64,47 +65,49 @@ export default async function ActivatePage({
     <div className="page-shell">
       <SiteHeader />
 
-      <main className="page-content py-12 flex justify-center">
-        <div className="surface-card max-w-2xl w-full p-8 sm:p-10 border-t-4 text-center" style={{ borderTopColor: isSuccess ? 'var(--primary)' : '#ef4444' }}>
+      <main className="page-content py-16 flex justify-center">
+        <div className="max-w-lg w-full text-center">
           <div className={cn(
-            "mx-auto flex h-20 w-20 items-center justify-center rounded-2xl mb-8 shadow-sm",
-            isSuccess ? "bg-teal-50 text-teal-600 dark:bg-teal-900/20 dark:text-teal-400" : "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400"
+            "mx-auto flex h-14 w-14 items-center justify-center rounded-xl mb-6",
+            isSuccess ? "bg-[var(--success-muted)] text-[var(--success)]" : "bg-[var(--danger-muted)] text-[var(--danger)]"
           )}>
-            {isSuccess ? <CheckCircle2 size={40} /> : <ShieldAlert size={40} />}
+            {isSuccess ? <CheckCircle2 size={28} /> : <ShieldAlert size={28} />}
           </div>
           
-          <h1 className="page-title">{isSuccess ? "Account Activated" : "Activation Failed"}</h1>
-          <p className="section-copy mt-4 max-w-lg mx-auto text-base">{result.message}</p>
+          <h1 className="page-title">{isSuccess ? "Account activated" : "Activation failed"}</h1>
+          <p className="section-copy mt-3 max-w-sm mx-auto">{result.message}</p>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-2 text-left">
-            <div className="surface-panel p-5">
-              <p className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Next Steps</p>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 text-left">
+            <div className="surface-panel p-4">
+              <p className="eyebrow mb-1.5">next steps</p>
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                 {isSuccess 
-                  ? "You can now sign in to the dashboard to register machines and manage relay sessions."
-                  : "If the link expired or was already used, ask an administrator to restart the approval and activation cycle."}
+                  ? "Sign in to register machines and manage relay sessions."
+                  : "Contact an administrator to restart the approval cycle."}
               </p>
             </div>
-            <div className="surface-panel p-5">
-              <p className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Security Policy</p>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Activation is a mandatory step after administrative approval. Only activated accounts can utilize the OIDC flow.
+            <div className="surface-panel p-4">
+              <p className="eyebrow mb-1.5">security</p>
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                Activation is mandatory after admin approval. Only activated accounts can use the OIDC flow.
               </p>
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row justify-center pt-8 border-t border-slate-100 dark:border-slate-800">
+          <div className="mt-8 flex flex-col gap-2 sm:flex-row justify-center">
             {isSuccess && (
-              <Link href="/login" className="button-primary h-10 px-8">
-                Sign In Now <ArrowRight size={16} className="ml-2" />
+              <Link href="/login" className="button-primary h-9 px-6 text-sm">
+                Sign in <ArrowRight size={14} />
               </Link>
             )}
-            <Link href="/" className="button-ghost h-10 px-6">
-              Return Home
+            <Link href="/" className="button-ghost h-9 px-5 text-sm">
+              Home
             </Link>
           </div>
         </div>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

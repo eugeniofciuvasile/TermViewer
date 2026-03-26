@@ -1,34 +1,47 @@
 import Link from "next/link";
-import { ArrowRight, Globe, QrCode, Shield, Sparkles, Terminal, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Globe, QrCode, Shield, Terminal, Wifi, FileText, MonitorSmartphone, ChevronRight, Github, UserCheck, MailCheck, Server, Smartphone } from "lucide-react";
 
 import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
-const featureCards = [
+const features = [
   {
     icon: Shield,
     title: "Identity-first access",
-    description:
-      "Users authenticate through Keycloak, admin approvals stay role-gated, and machines never expose enrollment secrets through the share flow.",
+    description: "OIDC via Keycloak, admin approval gates, role-based controls. Machine secrets never leak through the share flow.",
   },
   {
     icon: QrCode,
     title: "Ephemeral QR sessions",
-    description:
-      "The dashboard creates short-lived share links only while a machine is online and waiting, then rotates them before expiry.",
+    description: "Short-lived share tokens, auto-rotated before expiry. Connect by scanning — no credentials exchanged.",
   },
   {
     icon: Globe,
-    title: "Internet-ready relay",
-    description:
-      "TermViewer keeps the fast LAN workflow while adding a proper public control plane for remote machine selection and relay attachment.",
+    title: "Internet relay",
+    description: "WebSocket relay with TLS. Keep fast LAN discovery while adding a control plane for remote fleet access.",
+  },
+  {
+    icon: Wifi,
+    title: "Zero-config LAN",
+    description: "The agent broadcasts via mDNS. Open the app on the same network — machines appear automatically.",
+  },
+  {
+    icon: FileText,
+    title: "Audit & recording",
+    description: "Asciinema session recording. The public server logs every action with user, IP, and timestamp.",
+  },
+  {
+    icon: MonitorSmartphone,
+    title: "Mobile terminal",
+    description: "File transfer, clipboard sync, system HUD, custom macros, pan & zoom for complex TUIs.",
   },
 ];
 
-const workflowSteps = [
-  "Users request access and wait in a protected admin approval queue.",
-  "Approved requests trigger a one-time activation email with a 24-hour validity window.",
-  "Authenticated users register machines and keep agents online through heartbeats.",
-  "The mobile app scans a short-lived QR or selects an active machine from the authenticated list.",
+const steps = [
+  { icon: UserCheck, label: "Request", description: "User submits access request to admin approval queue" },
+  { icon: MailCheck, label: "Approve", description: "Admin reviews and triggers one-time activation email" },
+  { icon: Server, label: "Enroll", description: "User registers machines, agent reports via heartbeat" },
+  { icon: Smartphone, label: "Connect", description: "Mobile app scans QR or selects machine from fleet" },
 ];
 
 export default function Home() {
@@ -36,114 +49,117 @@ export default function Home() {
     <div className="page-shell">
       <SiteHeader />
 
-      <main className="page-content py-8 sm:py-12">
-        <section className="grid gap-8 xl:grid-cols-[1fr_0.8fr] xl:items-start mb-12">
-          <div className="surface-card p-8 sm:p-12 border-t-4 border-teal-600">
-            <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-800 dark:border-teal-900/30 dark:bg-teal-900/20 dark:text-teal-300 uppercase tracking-widest mb-6">
-              <Sparkles size={14} />
-              Production Ready
+      <main className="page-content py-12 sm:py-20">
+        {/* Hero */}
+        <section className="mb-24">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-secondary)] px-3 py-1.5 text-xs font-mono text-[var(--text-secondary)] mb-8">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--success)]" />
+              open source · AGPLv3
             </div>
 
-            <h1 className="page-title text-4xl sm:text-5xl font-black tracking-tight mb-6 leading-tight">
-              Remote shell access with a cleaner security model.
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-semibold tracking-tight text-[var(--text-primary)] mb-6 leading-[1.15]">
+              Secure terminal access<br />
+              <span className="text-[var(--accent)]">from anywhere.</span>
             </h1>
 
-            <p className="section-copy text-base sm:text-lg mb-8 max-w-2xl text-slate-600 dark:text-slate-400">
-              TermViewer turns the terminal into a controlled product surface: approved users, machine-scoped enrollment,
-              short-lived share sessions, and a relay path that works well beyond the local network.
+            <p className="text-[15px] text-[var(--text-secondary)] mb-10 max-w-lg leading-relaxed">
+              Stream terminal sessions over LAN or internet. Fleet management, OIDC auth, ephemeral QR sharing, and session recording — deployed with a single compose file.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Link href="/dashboard" className="button-primary h-12 px-8 text-sm w-full sm:w-auto shadow-lg shadow-teal-600/20">
+            <div className="flex flex-wrap items-center gap-3 mb-16">
+              <Link href="/dashboard" className="button-primary h-9 px-5 text-sm">
                 Open Dashboard
-                <ArrowRight size={18} className="ml-2" />
+                <ArrowRight size={14} />
               </Link>
-              <Link href="/register" className="button-secondary h-12 px-8 text-sm w-full sm:w-auto">
+              <Link href="/register" className="button-secondary h-9 px-5 text-sm">
                 Request Access
               </Link>
+              <a
+                href="https://github.com/eugeniofciuvasile/TermViewer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button-ghost h-9 px-4 text-sm"
+              >
+                <Github size={14} />
+                Star on GitHub
+              </a>
             </div>
 
-            <div className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {[
-                { title: "OIDC + Roles", text: "Identity management & admin gates" },
-                { title: "Ephemeral QR", text: "Rotating session tokens" },
-                { title: "Live Presence", text: "Real-time fleet monitoring" },
-              ].map((item) => (
-                <div key={item.title}>
-                  <p className="text-sm font-bold text-slate-900 dark:text-white mb-1">{item.title}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{item.text}</p>
-                </div>
-              ))}
+            {/* Terminal-style info block */}
+            <div className="surface-card p-0 overflow-hidden font-mono text-xs">
+              <div className="flex items-center gap-2.5 px-5 py-3 border-b border-[var(--border)] bg-[var(--surface-secondary)]">
+                <span className="h-2.5 w-2.5 rounded-full bg-[var(--danger)] opacity-60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[var(--warning)] opacity-60" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[var(--success)] opacity-60" />
+                <span className="ml-2 text-[var(--text-muted)]">overview</span>
+              </div>
+              <div className="p-5 space-y-2 text-[var(--text-secondary)]">
+                <div><span className="text-[var(--accent)]">auth</span>     keycloak OIDC · realm-role enforcement</div>
+                <div><span className="text-[var(--accent)]">fleet</span>    machine enrollment · heartbeat presence</div>
+                <div><span className="text-[var(--accent)]">share</span>    ephemeral QR tokens · auto-rotation</div>
+                <div><span className="text-[var(--accent)]">tenant</span>   row-level isolation · per-user machines</div>
+              </div>
             </div>
           </div>
-
-          <aside className="space-y-6">
-            <div className="surface-card p-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="h-12 w-12 rounded-xl bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 flex items-center justify-center">
-                  <Terminal size={24} />
-                </div>
-                <div>
-                  <p className="eyebrow mb-1">Operating Flow</p>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">Approval to Shell</h2>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {workflowSteps.map((step, index) => (
-                  <div key={index} className="flex gap-4">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-xs font-bold mt-0.5">
-                      {index + 1}
-                    </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{step}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="surface-card p-8 bg-slate-50 dark:bg-slate-900/50">
-              <p className="eyebrow mb-4">Core Capabilities</p>
-              <div className="space-y-3">
-                {[
-                  "Keycloak realm-role enforcement",
-                  "Machine presence and heartbeat",
-                  "Mobile OIDC and QR attachment",
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <CheckCircle2 size={16} className="text-teal-500 shrink-0" />
-                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </aside>
         </section>
 
-        <section className="mb-8">
-          <div className="mb-8 text-center max-w-2xl mx-auto">
-            <p className="eyebrow mb-2">Product Foundation</p>
-            <h2 className="section-title text-2xl">A Control Plane, Not a Prototype.</h2>
-            <p className="section-copy mt-3">
-              Centered on surfaces that matter in production: controlled onboarding, machine visibility, audited approvals, and secure relay sessions.
+        {/* Workflow */}
+        <section className="mb-24">
+          <div className="mb-10">
+            <p className="eyebrow mb-2">workflow</p>
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] tracking-tight">From approval to shell</h2>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <div key={i} className="surface-card surface-card-interactive p-6 relative">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="h-9 w-9 rounded-xl bg-[var(--accent-muted)] flex items-center justify-center">
+                      <Icon size={18} strokeWidth={1.75} className="text-[var(--accent)]" />
+                    </div>
+                    <div>
+                      <span className="font-mono text-[10px] text-[var(--text-muted)] font-medium">{String(i + 1).padStart(2, "0")}</span>
+                      <p className="text-sm font-semibold text-[var(--text-primary)] leading-tight">{step.label}</p>
+                    </div>
+                  </div>
+                  <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed">{step.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Features */}
+        <section className="mb-16">
+          <div className="mb-10">
+            <p className="eyebrow mb-2">capabilities</p>
+            <h2 className="text-xl font-semibold text-[var(--text-primary)] tracking-tight">Not a prototype</h2>
+            <p className="section-copy mt-2 max-w-lg">
+              Production controls: approved onboarding, fleet visibility, audited sessions, secure relay.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {featureCards.map((feature, i) => {
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature, i) => {
               const Icon = feature.icon;
               return (
-                <div key={i} className="surface-card p-8 group hover:-translate-y-1 transition-transform duration-300">
-                  <div className="h-10 w-10 rounded-lg bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                    <Icon size={20} strokeWidth={2.5} />
+                <div key={i} className="surface-card surface-card-interactive p-6 group">
+                  <div className="h-9 w-9 rounded-xl bg-[var(--accent-muted)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform duration-150">
+                    <Icon size={18} strokeWidth={1.75} className="text-[var(--accent)]" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2">{feature.title}</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">{feature.title}</h3>
+                  <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed">{feature.description}</p>
                 </div>
               );
             })}
           </div>
         </section>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

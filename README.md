@@ -4,7 +4,7 @@
 
 **Control your PC terminal from your phone — securely, instantly, anywhere.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.25-00ADD8?logo=go)](https://go.dev)
 [![Flutter](https://img.shields.io/badge/Flutter-3.11-02569B?logo=flutter)](https://flutter.dev)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js)](https://nextjs.org)
